@@ -1,16 +1,24 @@
 package com.royma.asteroidradar.repository
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.royma.asteroidradar.Asteroid
 
+/**
+ * Defines methods for using the Asteroid class with Room.
+ */
 @Dao
 interface AsteroidDatabaseDao {
 
     @Insert
     suspend fun insert(asteroid: Asteroid)
+
+    /**
+     * Inserts all passed in asteroid objects at once.
+     *
+     * @param objects a [List] of Asteroid objects
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(objects: List<Asteroid>)
 
     /**
      * When updating a row with a value already set in a column,
@@ -30,12 +38,23 @@ interface AsteroidDatabaseDao {
     suspend fun clear()
 
     /**
-     * Selects and returns the row that matches the supplied start time, which is our key.
+     * Selects and returns the row that matches the supplied asteroid ID, which is our key.
      *
-     * @param key startTimeMilli to match
+     * @param key asteroidId to match
      */
-    @Query("SELECT * from near_earth_objects WHERE asteroidId = :key")
+    @Query("SELECT * FROM near_earth_objects WHERE asteroidId = :key")
     suspend fun get(key: Long): Asteroid?
 
+    /**
+     * Selects and returns the latest asteroid.
+     */
+    @Query("SELECT * FROM near_earth_objects LIMIT 1")
+    suspend fun getLatestAsteroid(): Asteroid?
+
+    /**
+     * Get the row count from the table
+     */
+    @Query("SELECT COUNT(id) FROM near_earth_objects")
+    suspend fun getRowCount(): Int
 
 }
