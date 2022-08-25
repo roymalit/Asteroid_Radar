@@ -39,6 +39,7 @@ class AsteroidDatabaseTest {
 
     @Test
     @Throws(Exception::class)
+    // runBlocking required to prevent 'suspend' errors
      fun insertAndGetAsteroid() = runBlocking{
         val asteroid = TestAsteroid
         asteroidDao.insert(asteroid)
