@@ -38,6 +38,14 @@ interface AsteroidDatabaseDao {
     suspend fun clear()
 
     /**
+     * Selects and returns all rows in the table,
+     *
+     * sorted by date in descending order.
+     */
+    @Query("SELECT * FROM near_earth_objects ORDER BY asteroidId DESC")
+    suspend fun getAllAsteroids(): List<Asteroid>
+
+    /**
      * Selects and returns the row that matches the supplied asteroid ID, which is our key.
      *
      * @param key asteroidId to match

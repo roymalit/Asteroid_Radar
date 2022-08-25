@@ -7,7 +7,6 @@ import com.royma.asteroidradar.repository.AsteroidDatabase
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.IOException
@@ -40,13 +39,24 @@ class AsteroidDatabaseTest {
     @Test
     @Throws(Exception::class)
     // runBlocking required to prevent 'suspend' errors
-     fun insertAndGetAsteroid() = runBlocking{
+     fun insertAndGetLatestAsteroid() = runBlocking{
         val asteroid1 = TestAsteroid1
         val asteroid2 = TestAsteroid2
         val asteroid3 = TestAsteroid3
         asteroidDao.insertAll(listOf(asteroid1, asteroid2, asteroid3))
         val latest = asteroidDao.getLatestAsteroid()
-        assertEquals(latest?.codename, "Testeroid 3")
+        assert(latest?.codename == "Testeroid 3"){"Did not return latest asteroid"}
+    }
+
+    @Test
+    @Throws(Exception::class)
+    // runBlocking required to prevent 'suspend' errors
+    fun getAsteroid() = runBlocking{
+        val asteroid1 = TestAsteroid1
+        val asteroid2 = TestAsteroid2
+        val asteroid3 = TestAsteroid3
+        asteroidDao.insertAll(listOf(asteroid1, asteroid2, asteroid3))
+        assert(asteroidDao.get(2)?.codename == "Testeroid 2"){"Did not return ${asteroid2.codename}"}
     }
 
     @Test
@@ -54,7 +64,15 @@ class AsteroidDatabaseTest {
     fun insertAllAsteroids() = runBlocking{
         val asteroid = TestAsteroid1
         asteroidDao.insertAll(listOf(asteroid, asteroid, asteroid))
-        assertEquals(asteroidDao.getRowCount(), 3)
+        assert(asteroidDao.getRowCount() == 3){"Inserted incorrect number of asteroids"}
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getAllAsteroids() = runBlocking{
+        val asteroid = TestAsteroid1
+        asteroidDao.insertAll(listOf(asteroid, asteroid, asteroid))
+        assert(asteroidDao.getAllAsteroids().size == 3) {"Didn't return all rows"}
     }
 
 
@@ -65,7 +83,7 @@ class AsteroidDatabaseTest {
         asteroidDao.insert(asteroid1)
         asteroidDao.insert(asteroid1)
         asteroidDao.insert(asteroid1)
-        assertEquals(asteroidDao.getRowCount(), 3)
+        assert(asteroidDao.getRowCount() == 3){"Incorrect row count"}
     }
 
     @Test
@@ -74,7 +92,7 @@ class AsteroidDatabaseTest {
         val asteroid = TestAsteroid1
         asteroidDao.insert(asteroid)
         asteroidDao.clear()
-        assertEquals(asteroidDao.getRowCount(), 0)
+        assert(asteroidDao.getRowCount() == 0){"Database not fully cleared"}
     }
 
 }
