@@ -6,17 +6,19 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.royma.asteroidradar.main.MainFragment"
+        android:name="com.royma.asteroidradar.main.AsteroidRadarFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
             android:id="@+id/action_showDetail"
             app:destination="@id/detailFragment" />
+        <argument android:name="asteroidKey"
+            app:argType="long" />
     </fragment>
 
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.royma.asteroidradar.detail.DetailFragment"
+        android:name="com.royma.asteroidradar.detail.AsteroidDetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail">
 

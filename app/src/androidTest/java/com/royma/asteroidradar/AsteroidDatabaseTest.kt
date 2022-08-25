@@ -41,16 +41,18 @@ class AsteroidDatabaseTest {
     @Throws(Exception::class)
     // runBlocking required to prevent 'suspend' errors
      fun insertAndGetAsteroid() = runBlocking{
-        val asteroid = TestAsteroid
-        asteroidDao.insert(asteroid)
+        val asteroid1 = TestAsteroid1
+        val asteroid2 = TestAsteroid2
+        val asteroid3 = TestAsteroid3
+        asteroidDao.insertAll(listOf(asteroid1, asteroid2, asteroid3))
         val latest = asteroidDao.getLatestAsteroid()
-        assertEquals(latest?.codename, "Testeroid")
+        assertEquals(latest?.codename, "Testeroid 3")
     }
 
     @Test
     @Throws(Exception::class)
     fun insertAllAsteroids() = runBlocking{
-        val asteroid = TestAsteroid
+        val asteroid = TestAsteroid1
         asteroidDao.insertAll(listOf(asteroid, asteroid, asteroid))
         assertEquals(asteroidDao.getRowCount(), 3)
     }
@@ -59,7 +61,7 @@ class AsteroidDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun getRowCount() = runBlocking {
-        val asteroid1 = TestAsteroid
+        val asteroid1 = TestAsteroid1
         asteroidDao.insert(asteroid1)
         asteroidDao.insert(asteroid1)
         asteroidDao.insert(asteroid1)
@@ -69,7 +71,7 @@ class AsteroidDatabaseTest {
     @Test
     @Throws(Exception::class)
     fun clearDatabase() = runBlocking {
-        val asteroid = TestAsteroid
+        val asteroid = TestAsteroid1
         asteroidDao.insert(asteroid)
         asteroidDao.clear()
         assertEquals(asteroidDao.getRowCount(), 0)

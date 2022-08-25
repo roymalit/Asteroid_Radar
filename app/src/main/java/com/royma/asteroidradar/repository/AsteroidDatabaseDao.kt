@@ -48,7 +48,7 @@ interface AsteroidDatabaseDao {
     /**
      * Selects and returns the latest asteroid.
      */
-    @Query("SELECT * FROM near_earth_objects LIMIT 1")
+    @Query("SELECT * FROM near_earth_objects ORDER BY asteroidId DESC LIMIT 1")
     suspend fun getLatestAsteroid(): Asteroid?
 
     /**

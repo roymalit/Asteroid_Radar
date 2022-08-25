@@ -4,8 +4,8 @@
 
     <data>
         <variable
-            name="viewModel"
-            type="com.royma.asteroidradar.main.MainViewModel" />
+            name="asteroidRadarViewModel"
+            type="com.royma.asteroidradar.main.AsteroidRadarViewModel" />
 
     </data>
 

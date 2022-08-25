@@ -43,14 +43,36 @@ data class Asteroid(
     val asteroidId: Long = 0L
 ) : Parcelable
 
-// Asteroid object used to make testing easier
-val TestAsteroid = Asteroid(
+// Asteroid objects used to make testing easier
+val TestAsteroid1 = Asteroid(
     2159928,
-    "Testeroid",
+    "Testeroid 1",
     "All Close Approach Data",
     18.05,
     1.4589485569,
     17.7559067373,
     0.2238852542,
     false
+)
+
+val TestAsteroid2 = Asteroid(
+    2445974,
+    "Testeroid 2",
+    "All Close Approach Data",
+    20.29,
+    0.5200438667,
+    19.4510153897,
+    0.3948717663,
+    true
+)
+
+val TestAsteroid3 = Asteroid(
+    3290881,
+    "Testeroid 3",
+    "All Close Approach Data",
+    20.2,
+    0.5420507863,
+    13.2887839991,
+    0.109943137,
+    true
 )
