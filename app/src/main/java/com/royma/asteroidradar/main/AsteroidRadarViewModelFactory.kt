@@ -1,5 +1,6 @@
 package com.royma.asteroidradar.main
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
@@ -9,13 +10,13 @@ import com.royma.asteroidradar.repository.AsteroidDatabaseDao
  *
  * Provides the key for an asteroid and the AsteroidDatabaseDao to the ViewModel.
  */
-class AsteroidRadarViewModelFactory (
-    private val asteroidKey: Long,
-    private val dataSource: AsteroidDatabaseDao) : ViewModelProvider.Factory {
+class AsteroidRadarViewModelFactory(
+    private val dataSource: AsteroidDatabaseDao,
+    private val application: Application) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AsteroidRadarViewModel::class.java)) {
-            return AsteroidRadarViewModel(asteroidKey, dataSource) as T
+            return AsteroidRadarViewModel(dataSource, application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

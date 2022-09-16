@@ -12,8 +12,6 @@
         <action
             android:id="@+id/action_showDetail"
             app:destination="@id/detailFragment" />
-        <argument android:name="asteroidKey"
-            app:argType="long" />
     </fragment>
 
     <fragment

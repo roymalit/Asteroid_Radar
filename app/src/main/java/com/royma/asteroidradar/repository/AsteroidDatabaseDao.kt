@@ -13,6 +13,14 @@ interface AsteroidDatabaseDao {
     suspend fun insert(asteroid: Asteroid)
 
     /**
+     * Selects and returns the row that matches the supplied asteroid ID, which is our key.
+     *
+     * @param key asteroidId to match
+     */
+    @Query("SELECT * FROM near_earth_objects WHERE asteroidId = :key")
+    suspend fun get(key: Long): Asteroid?
+
+    /**
      * Inserts all passed in asteroid objects at once.
      *
      * @param objects a [List] of Asteroid objects
@@ -44,14 +52,6 @@ interface AsteroidDatabaseDao {
      */
     @Query("SELECT * FROM near_earth_objects ORDER BY asteroidId DESC")
     suspend fun getAllAsteroids(): List<Asteroid>
-
-    /**
-     * Selects and returns the row that matches the supplied asteroid ID, which is our key.
-     *
-     * @param key asteroidId to match
-     */
-    @Query("SELECT * FROM near_earth_objects WHERE asteroidId = :key")
-    suspend fun get(key: Long): Asteroid?
 
     /**
      * Selects and returns the latest asteroid.

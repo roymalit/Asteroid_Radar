@@ -50,7 +50,6 @@ class AsteroidDatabaseTest {
 
     @Test
     @Throws(Exception::class)
-    // runBlocking required to prevent 'suspend' errors
     fun getAsteroid() = runBlocking{
         val asteroid1 = TestAsteroid1
         val asteroid2 = TestAsteroid2

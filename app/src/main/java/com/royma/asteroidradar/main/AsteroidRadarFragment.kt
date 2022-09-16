@@ -17,15 +17,13 @@ class AsteroidRadarFragment : Fragment() {
                               savedInstanceState: Bundle?): View {
 
         val binding = FragmentMainBinding.inflate(inflater)
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         val application = requireNotNull(this.activity).application
 
-        val arguments = AsteroidRadarFragmentArgs.fromBundle(requireArguments())
-
         // Create an instance of the ViewModel Factory.
         val dataSource = AsteroidDatabase.getInstance(application).asteroidDatabaseDao
-        val viewModelFactory = AsteroidRadarViewModelFactory(arguments.asteroidKey, dataSource)
+        val viewModelFactory = AsteroidRadarViewModelFactory(dataSource, application)
 
         // Get a reference to the ViewModel associated with this fragment.
         val asteroidRadarViewModel =
@@ -34,6 +32,13 @@ class AsteroidRadarFragment : Fragment() {
         // To use the View Model with data binding, you have to explicitly
         // give the binding object a reference to it.
         binding.asteroidRadarViewModel = asteroidRadarViewModel
+
+
+        // Inform RecyclerView about adapter
+        val adapter = AsteroidRadarAdapter()
+        binding.asteroidRecycler.adapter = adapter
+
+//        asteroidRadarViewModel.allAsteroids.
 
 
         // TODO: Create list of clickable asteroids using RecyclerView
@@ -72,4 +77,5 @@ class AsteroidRadarFragment : Fragment() {
             }
         }, viewLifecycleOwner)
     }
+
 }
