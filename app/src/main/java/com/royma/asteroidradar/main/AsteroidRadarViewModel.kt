@@ -3,6 +3,7 @@ package com.royma.asteroidradar.main
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.TestAsteroid1
@@ -22,6 +23,7 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
 
     // Setup like this for testing
     lateinit var allAsteroids: List<Asteroid>
+    lateinit var allAsteroidsLiveData: LiveData<List<Asteroid>>
 
     init {
         viewModelScope.launch {
@@ -35,7 +37,8 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
 
     private suspend fun setupDummyData(){
         withContext(Dispatchers.IO){
-            database.insertAll(listOf(TestAsteroid1, TestAsteroid2, TestAsteroid3))
+            clear()
+            database.insertAll(listOf(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1))
             Log.i("setupDummyData()", "Database row count: ${database.getRowCount()}")
             allAsteroids = database.getAllAsteroids()
         }
