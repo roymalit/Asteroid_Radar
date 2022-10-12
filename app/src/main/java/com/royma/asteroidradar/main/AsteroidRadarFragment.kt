@@ -38,7 +38,12 @@ class AsteroidRadarFragment : Fragment() {
         val adapter = AsteroidRadarAdapter()
         binding.asteroidRecycler.adapter = adapter
 
-//        asteroidRadarViewModel.allAsteroids.
+        // Listens for changes in the database of Asteroids
+        asteroidRadarViewModel.allAsteroidsLD.observe(viewLifecycleOwner) {
+            it?.let {
+                adapter.submitList(it)
+            }
+        }
 
 
         // TODO: Create list of clickable asteroids using RecyclerView

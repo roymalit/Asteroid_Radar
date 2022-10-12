@@ -1,5 +1,6 @@
 package com.royma.asteroidradar.repository
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.royma.asteroidradar.Asteroid
 
@@ -51,7 +52,7 @@ interface AsteroidDatabaseDao {
      * sorted by date in descending order.
      */
     @Query("SELECT * FROM near_earth_objects ORDER BY asteroidId DESC")
-    suspend fun getAllAsteroids(): List<Asteroid>
+    fun getAllAsteroids(): LiveData<List<Asteroid>>
 
     /**
      * Selects and returns the latest asteroid.
