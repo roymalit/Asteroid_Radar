@@ -6,10 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.royma.asteroidradar.R
-import com.royma.asteroidradar.TestAsteroid1
-import com.royma.asteroidradar.TestAsteroid2
-import com.royma.asteroidradar.TestAsteroid3
+import com.royma.asteroidradar.*
 
 class AsteroidRadarAdapter: RecyclerView.Adapter<AsteroidRadarAdapter.ViewHolder>(){
 
@@ -25,10 +22,7 @@ class AsteroidRadarAdapter: RecyclerView.Adapter<AsteroidRadarAdapter.ViewHolder
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.asteroid_item_view, parent, false)
-
-        return ViewHolder(view)
+        return ViewHolder.from(parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -36,17 +30,31 @@ class AsteroidRadarAdapter: RecyclerView.Adapter<AsteroidRadarAdapter.ViewHolder
         holder.asteroidName.text = item.codename
         holder.approachDate.text = item.closeApproachData
 
-        holder.dangerImage.setImageResource(
-            when (item.isPotentiallyHazardous){
-                true -> R.drawable.ic_status_potentially_hazardous
-                false -> R.drawable.ic_status_normal
-            }
-        )
+        holder.bind(item)
     }
 
-    class ViewHolder (itemView: View): RecyclerView.ViewHolder(itemView){
+
+    class ViewHolder private constructor (itemView: View): RecyclerView.ViewHolder(itemView){
         val asteroidName: TextView = itemView.findViewById(R.id.asteroid_name_string)
         val approachDate: TextView = itemView.findViewById(R.id.approach_date_string)
         val dangerImage: ImageView = itemView.findViewById(R.id.potentially_dangerous_image)
+
+        fun bind(item: Asteroid) {
+            dangerImage.setImageResource(
+                when (item.isPotentiallyHazardous) {
+                    true -> R.drawable.ic_status_potentially_hazardous
+                    false -> R.drawable.ic_status_normal
+                }
+            )
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.asteroid_item_view, parent, false)
+
+                return ViewHolder(view)
+            }
+        }
     }
 }
