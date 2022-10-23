@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.royma.asteroidradar.Asteroid
-import com.royma.asteroidradar.R
 import com.royma.asteroidradar.databinding.ListItemAsteroidBinding
 
 class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolder>(AsteroidDiffCallback()){
@@ -33,12 +32,9 @@ class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolde
     class ViewHolder private constructor (val binding: ListItemAsteroidBinding): RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: Asteroid) {
-            binding.potentiallyDangerousImage.setImageResource(
-                when (item.isPotentiallyHazardous) {
-                    true -> R.drawable.ic_status_potentially_hazardous
-                    false -> R.drawable.ic_status_normal
-                }
-            )
+            binding.asteroid = item
+            // Good idea to always execute pending bindings when using BAs in the RecyclerView
+            binding.executePendingBindings()
         }
 
         companion object {

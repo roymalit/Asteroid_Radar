@@ -5,11 +5,13 @@ import android.widget.TextView
 import androidx.databinding.BindingAdapter
 
 @BindingAdapter("statusIcon")
-fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
-    if (isHazardous) {
-        imageView.setImageResource(R.drawable.ic_status_potentially_hazardous)
-    } else {
-        imageView.setImageResource(R.drawable.ic_status_normal)
+fun ImageView.bindAsteroidStatusImage(item: Asteroid?) {
+    item?.let {
+        if (item.isPotentiallyHazardous) {
+            setImageResource(R.drawable.ic_status_potentially_hazardous)
+        } else {
+            setImageResource(R.drawable.ic_status_normal)
+        }
     }
 }
 
