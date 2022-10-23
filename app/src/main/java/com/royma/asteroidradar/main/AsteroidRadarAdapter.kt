@@ -1,15 +1,13 @@
 package com.royma.asteroidradar.main
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.R
+import com.royma.asteroidradar.databinding.ListItemAsteroidBinding
 
 class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolder>(AsteroidDiffCallback()){
 
@@ -25,20 +23,17 @@ class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolde
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.asteroidName.text = item.codename
-        holder.approachDate.text = item.closeApproachData
+        holder.binding.asteroidNameString.text = item.codename
+        holder.binding.approachDateString.text = item.closeApproachData
 
         holder.bind(item)
     }
 
 
-    class ViewHolder private constructor (itemView: View): RecyclerView.ViewHolder(itemView){
-        val asteroidName: TextView = itemView.findViewById(R.id.asteroid_name_string)
-        val approachDate: TextView = itemView.findViewById(R.id.approach_date_string)
-        val dangerImage: ImageView = itemView.findViewById(R.id.potentially_dangerous_image)
+    class ViewHolder private constructor (val binding: ListItemAsteroidBinding): RecyclerView.ViewHolder(binding.root){
 
         fun bind(item: Asteroid) {
-            dangerImage.setImageResource(
+            binding.potentiallyDangerousImage.setImageResource(
                 when (item.isPotentiallyHazardous) {
                     true -> R.drawable.ic_status_potentially_hazardous
                     false -> R.drawable.ic_status_normal
@@ -48,10 +43,10 @@ class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolde
 
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
-                val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.asteroid_item_view, parent, false)
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = ListItemAsteroidBinding.inflate(layoutInflater, parent, false)
 
-                return ViewHolder(view)
+                return ViewHolder(binding)
             }
         }
     }

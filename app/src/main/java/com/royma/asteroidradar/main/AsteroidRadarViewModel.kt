@@ -19,7 +19,6 @@ import kotlinx.coroutines.withContext
  */
 class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
                              application: Application): AndroidViewModel(application) {
-    // TODO: Change from using TestAsteroid to MutableLiveData when working
 
     private var latestAsteroid = MutableLiveData<Asteroid>()
 
