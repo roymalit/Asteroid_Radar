@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.databinding.ListItemAsteroidBinding
 
-class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolder>(AsteroidDiffCallback()){
+class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()){
 
     /**
      * Part of the RecyclerView adapter, called when RecyclerView needs a new [ViewHolder].
@@ -22,17 +22,18 @@ class AsteroidRadarAdapter: ListAdapter<Asteroid, AsteroidRadarAdapter.ViewHolde
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
+
         holder.binding.asteroidNameString.text = item.codename
         holder.binding.approachDateString.text = item.closeApproachData
-
-        holder.bind(item)
+        holder.bind(clickListener, item)
     }
 
 
     class ViewHolder private constructor (val binding: ListItemAsteroidBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(item: Asteroid) {
+        fun bind(clickListener: AsteroidListener, item: Asteroid) {
             binding.asteroid = item
+            binding.clickListener = clickListener
             // Good idea to always execute pending bindings when using BAs in the RecyclerView
             binding.executePendingBindings()
         }
@@ -63,4 +64,8 @@ class AsteroidDiffCallback: DiffUtil.ItemCallback<Asteroid>(){
     override fun areContentsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
         return oldItem == newItem
     }
+}
+
+class AsteroidListener (val clickListener: (asteroidId: Long) -> Unit){
+    fun onClick(asteroid: Asteroid) = clickListener(asteroid.asteroidId)
 }

@@ -7,11 +7,15 @@
         <variable
             name="asteroid"
             type="com.royma.asteroidradar.Asteroid" />
+        <variable
+            name="clickListener"
+            type="com.royma.asteroidradar.main.AsteroidListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(asteroid)}">
 
         <TextView
             android:id="@+id/asteroid_name_string"
