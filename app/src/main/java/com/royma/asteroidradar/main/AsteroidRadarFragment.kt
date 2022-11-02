@@ -2,11 +2,11 @@ package com.royma.asteroidradar.main
 
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.royma.asteroidradar.R
 import com.royma.asteroidradar.databinding.FragmentMainBinding
 import com.royma.asteroidradar.repository.AsteroidDatabase
@@ -36,16 +36,25 @@ class AsteroidRadarFragment : Fragment() {
         // TODO: Create list of clickable asteroids using RecyclerView
         // Inform RecyclerView about adapter
         val adapter = AsteroidAdapter(AsteroidListener {
-            asteroidId -> Toast.makeText(context,
-                "Asteroid ID: $asteroidId", Toast.LENGTH_LONG).show()
+            asteroidId -> asteroidRadarViewModel.onAsteroidClicked(asteroidId)
         })
 
+        // Attaches the adapter to the Recycler
         binding.asteroidRecycler.adapter = adapter
 
         // Listens for changes in the database of Asteroids
         asteroidRadarViewModel.allAsteroidsLD.observe(viewLifecycleOwner) {
             it?.let {
                 adapter.submitList(it)
+            }
+        }
+
+        // Navigates to the Asteroid Detail fragment
+        asteroidRadarViewModel.navigateToAsteroidDetail.observe(viewLifecycleOwner){ asteroid ->
+            asteroid?.let {
+                this.findNavController().navigate(
+                    AsteroidRadarFragmentDirections.actionShowDetail(asteroid))
+                asteroidRadarViewModel.onAsteroidDetailNavigated()
             }
         }
 

@@ -1,8 +1,10 @@
 package com.royma.asteroidradar.main
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.Asteroid
@@ -24,6 +26,20 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
 
     // Stores the list of all the Asteroid objects returned from the database
     val allAsteroidsLD = database.getAllAsteroids()
+
+    private val _navigateToAsteroidDetail = MutableLiveData<Long>()
+    val navigateToAsteroidDetail: LiveData<Long>
+        get() = _navigateToAsteroidDetail
+
+    fun onAsteroidClicked(id: Long){
+        _navigateToAsteroidDetail.value = id
+    }
+
+    // Potential Lint error. Remove suppression when fixed
+    @SuppressLint("NullSafeMutableLiveData")
+    fun onAsteroidDetailNavigated(){
+        _navigateToAsteroidDetail.value = null
+    }
 
 
     init {

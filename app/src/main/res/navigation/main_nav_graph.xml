@@ -21,8 +21,8 @@
         tools:layout="@layout/fragment_detail">
 
         <argument
-            android:name="selectedAsteroid"
-            app:argType="com.royma.asteroidradar.Asteroid"/>
+            android:name="selectedAsteroidKey"
+            app:argType="long"/>
     </fragment>
 
 </navigation>
