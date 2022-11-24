@@ -24,16 +24,14 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:textColor="@color/default_text_color"
-            android:textSize="24sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/potentially_dangerous_image"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            tools:text="Asteroid" />
+            tools:text="Asteroid"
+            style="@style/ListItemTitle" />
 
         <TextView
             android:id="@+id/approach_date_string"
@@ -41,14 +39,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="@color/default_text_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/asteroid_name_string"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/asteroid_name_string"
             app:layout_constraintTop_toBottomOf="@+id/asteroid_name_string"
             app:layout_constraintVertical_bias="0.0"
-            tools:text="Date" />
+            tools:text="Date"
+            style="@style/ListItemSubtitle" />
 
         <ImageView
             android:id="@+id/potentially_dangerous_image"
