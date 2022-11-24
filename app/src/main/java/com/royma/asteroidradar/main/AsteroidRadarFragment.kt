@@ -36,7 +36,7 @@ class AsteroidRadarFragment : Fragment() {
         // TODO: Create list of clickable asteroids using RecyclerView
         // Inform RecyclerView about adapter
         val adapter = AsteroidAdapter(AsteroidListener {
-            asteroidId -> asteroidRadarViewModel.onAsteroidClicked(asteroidId)
+            asteroid -> asteroidRadarViewModel.onAsteroidClicked(asteroid)
         })
 
         // Attaches the adapter to the Recycler

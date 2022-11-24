@@ -27,15 +27,15 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
     // Stores the list of all the Asteroid objects returned from the database
     val allAsteroidsLD = database.getAllAsteroids()
 
-    private val _navigateToAsteroidDetail = MutableLiveData<Long>()
-    val navigateToAsteroidDetail: LiveData<Long>
+    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
+    val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
 
-    fun onAsteroidClicked(id: Long){
-        _navigateToAsteroidDetail.value = id
+    fun onAsteroidClicked(selectedAsteroid: Asteroid){
+        _navigateToAsteroidDetail.value = selectedAsteroid
     }
 
-    // Potential Lint error. Remove suppression when fixed
+    // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
     @SuppressLint("NullSafeMutableLiveData")
     fun onAsteroidDetailNavigated(){
         _navigateToAsteroidDetail.value = null
