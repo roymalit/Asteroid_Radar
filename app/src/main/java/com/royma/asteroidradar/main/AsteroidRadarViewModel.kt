@@ -11,16 +11,22 @@ import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.TestAsteroid1
 import com.royma.asteroidradar.TestAsteroid2
 import com.royma.asteroidradar.TestAsteroid3
+import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 /**
  * ViewModel for AsteroidRadarFragment.
  */
-class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
-                             application: Application): AndroidViewModel(application) {
+class AsteroidRadarViewModel(
+    val database: AsteroidDatabaseDao,
+    application: Application
+) : AndroidViewModel(application) {
 
     private var latestAsteroid = MutableLiveData<Asteroid>()
 
@@ -31,13 +37,17 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
     val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
 
+    private val _response = MutableLiveData<String>()
+    val response: LiveData<String>
+        get() = _response
+
     fun onAsteroidClicked(selectedAsteroid: Asteroid){
         _navigateToAsteroidDetail.value = selectedAsteroid
     }
 
     // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
     @SuppressLint("NullSafeMutableLiveData")
-    fun onAsteroidDetailNavigated(){
+    fun onAsteroidDetailNavigated() {
         _navigateToAsteroidDetail.value = null
     }
 
@@ -46,14 +56,15 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         viewModelScope.launch {
             setupDummyData()
         }
+        getNasaAsteroids()
     }
 
     /**
      * Fills the database with dummy data for testing if database usage is successful before
      * connecting it to an online repo.
      */
-    private suspend fun setupDummyData(){
-        withContext(Dispatchers.IO){
+    private suspend fun setupDummyData() {
+        withContext(Dispatchers.IO) {
             clear()
             database.insertAll(listOf(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1))
             Log.i("setupDummyData()", "Database row count: ${database.getRowCount()}")
@@ -64,20 +75,34 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
 //        var image = PictureOfDay()
 //    }
 
-    private suspend fun insert(asteroid: Asteroid){
-        withContext(Dispatchers.IO){
+    private fun getNasaAsteroids(){
+        NasaApi.retrofitService.getAsteroids().enqueue(object: Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                _response.value = response.body()
+                Log.i("onResponse()", "Response body: " + response.body())
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                _response.value = "Failure: " + t.message
+                Log.i("onFailure()", t.message.toString())
+            }
+        })
+    }
+
+    private suspend fun insert(asteroid: Asteroid) {
+        withContext(Dispatchers.IO) {
             database.insert(asteroid)
         }
     }
 
-    private suspend fun update(asteroid: Asteroid){
-        withContext(Dispatchers.IO){
+    private suspend fun update(asteroid: Asteroid) {
+        withContext(Dispatchers.IO) {
             database.update(asteroid)
         }
     }
 
-    private suspend fun clear(){
-        withContext(Dispatchers.IO){
+    private suspend fun clear() {
+        withContext(Dispatchers.IO) {
             database.clear()
         }
     }
