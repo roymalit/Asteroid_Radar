@@ -2,12 +2,15 @@ package com.royma.asteroidradar
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Timber.plant()
 
         // TODO: Make sure the entire app works without an internet connection.
     }

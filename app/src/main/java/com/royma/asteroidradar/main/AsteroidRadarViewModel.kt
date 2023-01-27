@@ -2,7 +2,6 @@ package com.royma.asteroidradar.main
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,13 +11,16 @@ import com.royma.asteroidradar.TestAsteroid1
 import com.royma.asteroidradar.TestAsteroid2
 import com.royma.asteroidradar.TestAsteroid3
 import com.royma.asteroidradar.api.NasaApi
+import com.royma.asteroidradar.api.parseAsteroidsJsonResult
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 /**
  * ViewModel for AsteroidRadarFragment.
@@ -33,17 +35,18 @@ class AsteroidRadarViewModel(
     // Stores the list of all the Asteroid objects returned from the database
     val allAsteroidsLD = database.getAllAsteroids()
 
-    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
-    val navigateToAsteroidDetail: LiveData<Asteroid>
-        get() = _navigateToAsteroidDetail
-
     private val _response = MutableLiveData<String>()
     val response: LiveData<String>
         get() = _response
 
-    fun onAsteroidClicked(selectedAsteroid: Asteroid){
-        _navigateToAsteroidDetail.value = selectedAsteroid
-    }
+    private val _asteroids = MutableLiveData<List<Asteroid>>()
+    val asteroids: LiveData<List<Asteroid>>
+        get() = _asteroids
+
+    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
+    val navigateToAsteroidDetail: LiveData<Asteroid>
+        get() = _navigateToAsteroidDetail
+
 
     // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
     @SuppressLint("NullSafeMutableLiveData")
@@ -67,7 +70,7 @@ class AsteroidRadarViewModel(
         withContext(Dispatchers.IO) {
             clear()
             database.insertAll(listOf(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1))
-            Log.i("setupDummyData()", "Database row count: ${database.getRowCount()}")
+            Timber.tag("setupDummyData()").i("Database row count: %s", database.getRowCount())
         }
     }
 
@@ -75,16 +78,22 @@ class AsteroidRadarViewModel(
 //        var image = PictureOfDay()
 //    }
 
+    // Note: Result is a JSON object instead of an array which causes problems
+    // Object must be parsed to make it usable by Moshi
     private fun getNasaAsteroids(){
         NasaApi.retrofitService.getAsteroids().enqueue(object: Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                _response.value = response.body()
-                Log.i("onResponse()", "Response body: " + response.body())
+                // Stores converted Call response as a List<Asteroid>
+                val parsedResponse = response.body()?.let { parseAsteroidsJsonResult(JSONObject(it)) }
+                if (response.isSuccessful && parsedResponse != null){
+                    _response.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
+                    Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
+                }
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
                 _response.value = "Failure: " + t.message
-                Log.i("onFailure()", t.message.toString())
+                Timber.tag("Failure").e(t)
             }
         })
     }
@@ -107,4 +116,7 @@ class AsteroidRadarViewModel(
         }
     }
 
+    fun onAsteroidClicked(selectedAsteroid: Asteroid){
+        _navigateToAsteroidDetail.value = selectedAsteroid
+    }
 }
