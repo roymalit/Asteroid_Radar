@@ -4,7 +4,6 @@ import com.royma.asteroidradar.Constants
 import com.royma.asteroidradar.PrivateConstants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -34,21 +33,14 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 interface NasaApiService {
-
-//    @GET("/planetary/apod")
-//    suspend fun getPictureOfDay(
-//        @Query("api_key") key: String = PrivateConstants.MY_API_KEY
-//    ): PictureOfDay
-//
-
     /**
      * GETs 'picture of the day' from NASA api
      * @param key Personal API key needed to access NASA server data
      */
     @GET("/planetary/apod")
-    fun getPictureOfDay(
+    suspend fun getPictureOfDay(
         @Query("api_key") key: String = PrivateConstants.MY_API_KEY
-    ): Call<String>
+    ): String
 
     /**
      * GETs asteroid data from NASA api.
@@ -56,11 +48,11 @@ interface NasaApiService {
      * @param apiKey Personal API key needed to access NASA server data
      */
     @GET("neo/rest/v1/feed")
-    fun getAsteroids(
+    suspend fun getAsteroids(
         @Query("start_date") startDate: String = SimpleDateFormat(Constants.API_QUERY_DATE_FORMAT,
             Locale.getDefault()).format(Date()),
         @Query("api_key") apiKey: String = PrivateConstants.MY_API_KEY,
-    ): Call<String>
+    ): String
 
 }
 

@@ -17,9 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import timber.log.Timber
 
 /**
@@ -56,9 +53,6 @@ class AsteroidRadarViewModel(
 
 
     init {
-        viewModelScope.launch {
-            setupDummyData()
-        }
         getNasaAsteroids()
     }
 
@@ -81,28 +75,31 @@ class AsteroidRadarViewModel(
     // Note: Result is a JSON object instead of an array which causes problems
     // Object must be parsed to make it usable by Moshi
     private fun getNasaAsteroids(){
-        NasaApi.retrofitService.getAsteroids().enqueue(object: Callback<String> {
-            @SuppressLint("NullSafeMutableLiveData")
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                // Stores converted Call response as a List<Asteroid>
-                val parsedResponse = response.body()?.let { parseAsteroidsJsonResult(JSONObject(it)) }
-                if (response.isSuccessful && parsedResponse != null){
-                    // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
-                    _asteroids.value = parsedResponse
-                    Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
-                }
+        viewModelScope.launch {
+            try {
+                val stringResult = NasaApi.retrofitService.getAsteroids()
+                // Casts the string result to a JSON object then converts it into a List<Asteroid>
+                val parsedResponse = parseAsteroidsJsonResult(JSONObject(stringResult))
+                _asteroids.value = parsedResponse
+                // storeInOfflineDatabase(parsedResponse)
+                Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
+            } catch (e: Exception){
+                _response.value = "Failure: ${e.message}"
+                Timber.tag("Failure").e(e)
             }
+        }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                _response.value = "Failure: " + t.message
-                Timber.tag("Failure").e(t)
-            }
-        })
     }
 
     private suspend fun insert(asteroid: Asteroid) {
         withContext(Dispatchers.IO) {
             database.insert(asteroid)
+        }
+    }
+
+    private suspend fun insertAll(asteroids: List<Asteroid>) {
+        withContext(Dispatchers.IO) {
+            database.insertAll(asteroids)
         }
     }
 
@@ -116,6 +113,11 @@ class AsteroidRadarViewModel(
         withContext(Dispatchers.IO) {
             database.clear()
         }
+    }
+
+    private suspend fun storeInOfflineDatabase(list: List<Asteroid>) {
+        clear()
+        insertAll(list)
     }
 
     fun onAsteroidClicked(selectedAsteroid: Asteroid){

@@ -22,7 +22,7 @@ interface AsteroidDatabaseDao {
     suspend fun get(key: Long): Asteroid?
 
     /**
-     * Inserts all passed in asteroid objects at once.
+     * Inserts all passed-in asteroid objects at once.
      *
      * @param objects a [List] of Asteroid objects
      */
