@@ -32,17 +32,17 @@ class AsteroidRadarViewModel(
 
     private var latestAsteroid = MutableLiveData<Asteroid>()
 
-    // Stores the list of all the Asteroid objects returned from the database
-    val allAsteroidsLD = database.getAllAsteroids()
-
+    // Stores the raw data returned from the network API call
     private val _response = MutableLiveData<String>()
     val response: LiveData<String>
         get() = _response
 
+    // Stores the list of all the Asteroid objects returned from the database
     private val _asteroids = MutableLiveData<List<Asteroid>>()
     val asteroids: LiveData<List<Asteroid>>
         get() = _asteroids
 
+    // Used to track navigation to Detail view
     private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
     val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
@@ -82,11 +82,13 @@ class AsteroidRadarViewModel(
     // Object must be parsed to make it usable by Moshi
     private fun getNasaAsteroids(){
         NasaApi.retrofitService.getAsteroids().enqueue(object: Callback<String> {
+            @SuppressLint("NullSafeMutableLiveData")
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 // Stores converted Call response as a List<Asteroid>
                 val parsedResponse = response.body()?.let { parseAsteroidsJsonResult(JSONObject(it)) }
                 if (response.isSuccessful && parsedResponse != null){
-                    _response.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
+                    // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
+                    _asteroids.value = parsedResponse
                     Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
                 }
             }
