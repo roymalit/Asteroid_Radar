@@ -6,10 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.royma.asteroidradar.Asteroid
-import com.royma.asteroidradar.TestAsteroid1
-import com.royma.asteroidradar.TestAsteroid2
-import com.royma.asteroidradar.TestAsteroid3
+import com.royma.asteroidradar.*
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
@@ -30,14 +27,19 @@ class AsteroidRadarViewModel(
     private var latestAsteroid = MutableLiveData<Asteroid>()
 
     // Stores the raw data returned from the network API call
-    private val _response = MutableLiveData<String>()
-    val response: LiveData<String>
-        get() = _response
+    private val _status = MutableLiveData<String>()
+    val status: LiveData<String>
+        get() = _status
 
     // Stores the list of all the Asteroid objects returned from the database
     private val _asteroids = MutableLiveData<List<Asteroid>>()
     val asteroids: LiveData<List<Asteroid>>
         get() = _asteroids
+
+    // Stores the Astronomy picture of the day
+    private val _picOfDay = MutableLiveData<PictureOfDay>()
+    val picOfDay: LiveData<PictureOfDay>
+        get() = _picOfDay
 
     // Used to track navigation to Detail view
     private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
@@ -53,6 +55,7 @@ class AsteroidRadarViewModel(
 
 
     init {
+        getImageOfTheDay()
         getNasaAsteroids()
     }
 
@@ -68,9 +71,18 @@ class AsteroidRadarViewModel(
         }
     }
 
-//    private suspend fun getImageOfTheDay(){
-//        var image = PictureOfDay()
-//    }
+    private fun getImageOfTheDay(){
+        viewModelScope.launch {
+            try {
+                val picObject = NasaApi.retrofitService.getPictureOfDay()
+                _picOfDay.value = picObject
+                _status.value = "Success! Picture of the day '${picObject.title}' retrieved"
+            } catch (e: Exception){
+                _status.value = "Failure: ${e.message}"
+                Timber.tag("Failure").e(e)
+            }
+        }
+    }
 
     // Note: Result is a JSON object instead of an array which causes problems
     // Object must be parsed to make it usable by Moshi
@@ -80,11 +92,12 @@ class AsteroidRadarViewModel(
                 val stringResult = NasaApi.retrofitService.getAsteroids()
                 // Casts the string result to a JSON object then converts it into a List<Asteroid>
                 val parsedResponse = parseAsteroidsJsonResult(JSONObject(stringResult))
+                _status.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
                 _asteroids.value = parsedResponse
                 // storeInOfflineDatabase(parsedResponse)
                 Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
             } catch (e: Exception){
-                _response.value = "Failure: ${e.message}"
+                _status.value = "Failure: ${e.message}"
                 Timber.tag("Failure").e(e)
             }
         }

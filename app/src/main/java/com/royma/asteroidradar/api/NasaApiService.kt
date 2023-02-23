@@ -1,6 +1,7 @@
 package com.royma.asteroidradar.api
 
 import com.royma.asteroidradar.Constants
+import com.royma.asteroidradar.PictureOfDay
 import com.royma.asteroidradar.PrivateConstants
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -40,7 +41,7 @@ interface NasaApiService {
     @GET("/planetary/apod")
     suspend fun getPictureOfDay(
         @Query("api_key") key: String = PrivateConstants.MY_API_KEY
-    ): String
+    ): PictureOfDay
 
     /**
      * GETs asteroid data from NASA api.

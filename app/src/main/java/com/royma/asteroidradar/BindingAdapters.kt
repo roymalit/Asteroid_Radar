@@ -2,7 +2,9 @@ package com.royma.asteroidradar
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import com.squareup.picasso.Picasso
 
 @BindingAdapter("statusIcon")
 fun ImageView.bindAsteroidStatusImage(item: Asteroid?) {
@@ -40,4 +42,15 @@ fun bindTextViewToKmUnit(textView: TextView, number: Double) {
 fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     val context = textView.context
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
+}
+
+@BindingAdapter("pictureOfDay")
+fun ImageView.bindPictureOfDayImage(pictureOfDay: PictureOfDay?){
+    pictureOfDay.let {
+        val imgUri = pictureOfDay?.url?.toUri()
+        Picasso.get()
+            .load(imgUri)
+            .placeholder(R.drawable.placeholder_picture_of_day)
+            .into(this)
+    }
 }

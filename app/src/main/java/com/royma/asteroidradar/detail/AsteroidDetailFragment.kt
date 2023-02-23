@@ -12,8 +12,6 @@ import com.royma.asteroidradar.R
 import com.royma.asteroidradar.databinding.FragmentDetailBinding
 import com.royma.asteroidradar.repository.AsteroidDatabase
 
-// TODO: Setup Detail viewModel
-
 class AsteroidDetailFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -39,9 +37,7 @@ class AsteroidDetailFragment : Fragment() {
             displayAstronomicalUnitExplanationDialog()
         }
 
-        // TODO: Display previously selected asteroid data correctly
-
-        // TODO: Display correct 'hazardous' image
+        // TODO: Make fragment title change to match selected asteroid
 
         return binding.root
     }
