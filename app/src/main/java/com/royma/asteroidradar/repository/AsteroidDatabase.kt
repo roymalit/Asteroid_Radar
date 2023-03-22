@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.royma.asteroidradar.Asteroid
+import com.royma.asteroidradar.domain.Asteroid
 
 /**
  * A database that stores Asteroid information.

@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.databinding.ListItemAsteroidBinding
+import com.royma.asteroidradar.domain.Asteroid
 
 class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()){
 

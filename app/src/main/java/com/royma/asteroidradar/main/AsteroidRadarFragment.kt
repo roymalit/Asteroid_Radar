@@ -33,8 +33,7 @@ class AsteroidRadarFragment : Fragment() {
         // give the binding object a reference to it.
         binding.asteroidRadarViewModel = asteroidRadarViewModel
 
-        // TODO: Create list of clickable asteroids using RecyclerView
-        // Inform RecyclerView about adapter
+       // Inform RecyclerView about adapter
         val adapter = AsteroidAdapter(AsteroidListener {
             asteroid -> asteroidRadarViewModel.onAsteroidClicked(asteroid)
         })
@@ -63,11 +62,6 @@ class AsteroidRadarFragment : Fragment() {
         /*
             TODO: Use a Worker to download and save/cache today's asteroid data in background
              once a day when the device is charging and wifi is enabled
-         */
-
-        /*
-            TODO: Download Picture of Day JSON, parse it using Moshi and display it at the top of
-             Main screen using Picasso Library
          */
 
         return binding.root

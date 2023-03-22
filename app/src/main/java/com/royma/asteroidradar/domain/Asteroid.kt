@@ -1,4 +1,4 @@
-package com.royma.asteroidradar
+package com.royma.asteroidradar.domain
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

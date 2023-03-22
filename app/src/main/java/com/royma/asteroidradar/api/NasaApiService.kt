@@ -1,8 +1,8 @@
 package com.royma.asteroidradar.api
 
 import com.royma.asteroidradar.Constants
-import com.royma.asteroidradar.PictureOfDay
 import com.royma.asteroidradar.PrivateConstants
+import com.royma.asteroidradar.domain.PictureOfDay
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit

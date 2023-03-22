@@ -6,9 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.royma.asteroidradar.*
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
+import com.royma.asteroidradar.domain.*
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

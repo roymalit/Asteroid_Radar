@@ -22,7 +22,7 @@
 
         <argument
             android:name="selectedAsteroid"
-            app:argType="com.royma.asteroidradar.Asteroid"/>
+            app:argType="com.royma.asteroidradar.domain.Asteroid"/>
     </fragment>
 
 </navigation>

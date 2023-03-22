@@ -1,4 +1,4 @@
-package com.royma.asteroidradar
+package com.royma.asteroidradar.domain
 
 import com.squareup.moshi.Json
 

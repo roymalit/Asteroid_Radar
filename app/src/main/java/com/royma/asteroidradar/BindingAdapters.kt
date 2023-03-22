@@ -4,6 +4,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import com.royma.asteroidradar.domain.Asteroid
+import com.royma.asteroidradar.domain.PictureOfDay
 import com.squareup.picasso.Picasso
 
 @BindingAdapter("statusIcon")

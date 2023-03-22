@@ -1,7 +1,7 @@
 package com.royma.asteroidradar.api
 
-import com.royma.asteroidradar.Asteroid
 import com.royma.asteroidradar.Constants
+import com.royma.asteroidradar.domain.Asteroid
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*

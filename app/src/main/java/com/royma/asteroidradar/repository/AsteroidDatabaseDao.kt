@@ -2,7 +2,7 @@ package com.royma.asteroidradar.repository
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.royma.asteroidradar.Asteroid
+import com.royma.asteroidradar.domain.Asteroid
 
 /**
  * Defines methods for using the Asteroid class with Room.

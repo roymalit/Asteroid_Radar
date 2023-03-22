@@ -2,7 +2,7 @@ package com.royma.asteroidradar.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.royma.asteroidradar.Asteroid
+import com.royma.asteroidradar.domain.Asteroid
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 
 /**
