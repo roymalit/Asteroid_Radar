@@ -6,7 +6,7 @@
     <data>
         <variable
             name="asteroid"
-            type="com.royma.asteroidradar.domain.Asteroid" />
+            type="com.royma.asteroidradar.database.DatabaseAsteroid" />
 
         <variable
             name="detailViewModel"
@@ -62,7 +62,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="@{detailViewModel.selectedAsteroid.closeApproachData}"
+                        android:text="@{detailViewModel.selectedAsteroid.closeApproachDate}"
                         android:textColor="@color/default_text_color"
                         android:textStyle="bold"
                         tools:text="2020-02-01" />

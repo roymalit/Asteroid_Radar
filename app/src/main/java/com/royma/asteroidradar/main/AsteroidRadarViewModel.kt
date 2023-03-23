@@ -8,7 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
-import com.royma.asteroidradar.domain.*
+import com.royma.asteroidradar.database.DatabaseAsteroid
+import com.royma.asteroidradar.domain.PictureOfDay
+import com.royma.asteroidradar.domain.TestAsteroid1
+import com.royma.asteroidradar.domain.TestAsteroid2
+import com.royma.asteroidradar.domain.TestAsteroid3
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +28,7 @@ class AsteroidRadarViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
-    private var latestAsteroid = MutableLiveData<Asteroid>()
+    private var latestAsteroid = MutableLiveData<DatabaseAsteroid>()
 
     // Stores the raw data returned from the network API call
     private val _status = MutableLiveData<String>()
@@ -32,8 +36,8 @@ class AsteroidRadarViewModel(
         get() = _status
 
     // Stores the list of all the Asteroid objects returned from the database
-    private val _asteroids = MutableLiveData<List<Asteroid>>()
-    val asteroids: LiveData<List<Asteroid>>
+    private val _asteroids = MutableLiveData<List<DatabaseAsteroid>>()
+    val asteroids: LiveData<List<DatabaseAsteroid>>
         get() = _asteroids
 
     // Stores the Astronomy picture of the day
@@ -42,8 +46,8 @@ class AsteroidRadarViewModel(
         get() = _picOfDay
 
     // Used to track navigation to Detail view
-    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
-    val navigateToAsteroidDetail: LiveData<Asteroid>
+    private val _navigateToAsteroidDetail = MutableLiveData<DatabaseAsteroid>()
+    val navigateToAsteroidDetail: LiveData<DatabaseAsteroid>
         get() = _navigateToAsteroidDetail
 
 
@@ -66,7 +70,7 @@ class AsteroidRadarViewModel(
     private suspend fun setupDummyData() {
         withContext(Dispatchers.IO) {
             clear()
-            database.insertAll(listOf(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1))
+            database.insertAll(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1)
             Timber.tag("setupDummyData()").i("Database row count: %s", database.getRowCount())
         }
     }
@@ -104,19 +108,19 @@ class AsteroidRadarViewModel(
 
     }
 
-    private suspend fun insert(asteroid: Asteroid) {
+    private suspend fun insert(asteroid: DatabaseAsteroid) {
         withContext(Dispatchers.IO) {
             database.insert(asteroid)
         }
     }
 
-    private suspend fun insertAll(asteroids: List<Asteroid>) {
+    private suspend fun insertAll(asteroids: DatabaseAsteroid) {
         withContext(Dispatchers.IO) {
             database.insertAll(asteroids)
         }
     }
 
-    private suspend fun update(asteroid: Asteroid) {
+    private suspend fun update(asteroid: DatabaseAsteroid) {
         withContext(Dispatchers.IO) {
             database.update(asteroid)
         }
@@ -128,12 +132,7 @@ class AsteroidRadarViewModel(
         }
     }
 
-    private suspend fun storeInOfflineDatabase(list: List<Asteroid>) {
-        clear()
-        insertAll(list)
-    }
-
-    fun onAsteroidClicked(selectedAsteroid: Asteroid){
+    fun onAsteroidClicked(selectedAsteroid: DatabaseAsteroid){
         _navigateToAsteroidDetail.value = selectedAsteroid
     }
 }

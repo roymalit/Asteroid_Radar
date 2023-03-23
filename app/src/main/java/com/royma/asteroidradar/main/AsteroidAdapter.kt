@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.royma.asteroidradar.database.DatabaseAsteroid
 import com.royma.asteroidradar.databinding.ListItemAsteroidBinding
-import com.royma.asteroidradar.domain.Asteroid
 
-class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()){
+class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<DatabaseAsteroid, AsteroidAdapter.ViewHolder>(AsteroidDiffCallback()){
 
     /**
      * Part of the RecyclerView adapter, called when RecyclerView needs a new [ViewHolder].
@@ -24,14 +24,14 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid
         val item = getItem(position)
 
         holder.binding.asteroidNameString.text = item.codename
-        holder.binding.approachDateString.text = item.closeApproachData
+        holder.binding.approachDateString.text = item.closeApproachDate
         holder.bind(clickListener, item)
     }
 
 
     class ViewHolder private constructor (val binding: ListItemAsteroidBinding): RecyclerView.ViewHolder(binding.root){
 
-        fun bind(clickListener: AsteroidListener, item: Asteroid) {
+        fun bind(clickListener: AsteroidListener, item: DatabaseAsteroid) {
             binding.asteroid = item
             binding.clickListener = clickListener
             // Good idea to always execute pending bindings when using BAs in the RecyclerView
@@ -55,17 +55,17 @@ class AsteroidAdapter(val clickListener: AsteroidListener): ListAdapter<Asteroid
  * Used by [ListAdapter] to calculate the minimum number of changes between and old list and a new
  * list that's been passed to `submitList`.
  */
-class AsteroidDiffCallback: DiffUtil.ItemCallback<Asteroid>(){
+class AsteroidDiffCallback: DiffUtil.ItemCallback<DatabaseAsteroid>(){
 
-    override fun areItemsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
+    override fun areItemsTheSame(oldItem: DatabaseAsteroid, newItem: DatabaseAsteroid): Boolean {
         return oldItem.asteroidId == newItem.asteroidId
     }
 
-    override fun areContentsTheSame(oldItem: Asteroid, newItem: Asteroid): Boolean {
+    override fun areContentsTheSame(oldItem: DatabaseAsteroid, newItem: DatabaseAsteroid): Boolean {
         return oldItem == newItem
     }
 }
 
-class AsteroidListener(val clickListener: (asteroid: Asteroid) -> Unit){
-    fun onClick(asteroid: Asteroid) = clickListener(asteroid)
+class AsteroidListener(val clickListener: (asteroid: DatabaseAsteroid) -> Unit){
+    fun onClick(asteroid: DatabaseAsteroid) = clickListener(asteroid)
 }

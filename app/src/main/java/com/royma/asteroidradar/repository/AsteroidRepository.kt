@@ -1,18 +1,28 @@
 package com.royma.asteroidradar.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import com.royma.asteroidradar.api.NasaApi
+import com.royma.asteroidradar.api.asDatabaseModel
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
+import com.royma.asteroidradar.database.DatabaseAsteroid
+import com.royma.asteroidradar.database.asDomainModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class AsteroidRepository (private val database: AsteroidDatabase) {
 
+    val asteroids: LiveData<List<DatabaseAsteroid>> =
+            Transformations.map(database.asteroidDatabaseDao.getAsteroids()){
+        it.asDomainModel()
+    }
+
     suspend fun refreshAsteroids(){
         withContext(Dispatchers.IO){
-            val latestAsteroids = parseAsteroidsJsonResult(
+            val asteroidList = parseAsteroidsJsonResult(
                     JSONObject(NasaApi.retrofitService.getAsteroids()))
-            database.asteroidDatabaseDao.insertAll(latestAsteroids)
+            database.asteroidDatabaseDao.insertAll(*asteroidList.asDatabaseModel())
         }
     }
 }

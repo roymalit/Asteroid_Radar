@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.royma.asteroidradar.domain.Asteroid
+import com.royma.asteroidradar.database.DatabaseAsteroid
 
 /**
  * A database that stores Asteroid information.
@@ -13,7 +13,7 @@ import com.royma.asteroidradar.domain.Asteroid
  * This pattern is pretty much the same for any database,
  * so you can reuse it.
  */
-@Database(entities = [Asteroid::class], version = 1, exportSchema = false)
+@Database(entities = [DatabaseAsteroid::class], version = 1, exportSchema = false)
 abstract class AsteroidDatabase : RoomDatabase() {
 
     /**

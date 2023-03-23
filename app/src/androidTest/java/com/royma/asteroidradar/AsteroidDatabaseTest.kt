@@ -46,7 +46,7 @@ class AsteroidDatabaseTest {
         val asteroid1 = TestAsteroid1
         val asteroid2 = TestAsteroid2
         val asteroid3 = TestAsteroid3
-        asteroidDao.insertAll(listOf(asteroid1, asteroid2, asteroid3))
+        asteroidDao.insertAll(asteroid1, asteroid2, asteroid3)
         val latest = asteroidDao.getLatestAsteroid()
         assert(latest?.codename == "Testeroid 3"){"Did not return latest asteroid"}
     }
@@ -57,7 +57,7 @@ class AsteroidDatabaseTest {
         val asteroid1 = TestAsteroid1
         val asteroid2 = TestAsteroid2
         val asteroid3 = TestAsteroid3
-        asteroidDao.insertAll(listOf(asteroid1, asteroid2, asteroid3))
+        asteroidDao.insertAll(asteroid1, asteroid2, asteroid3)
         assert(asteroidDao.get(2)?.codename == "Testeroid 2"){"Did not return ${asteroid2.codename}"}
     }
 
@@ -65,7 +65,7 @@ class AsteroidDatabaseTest {
     @Throws(Exception::class)
     fun insertAllAsteroids() = runBlocking{
         val asteroid = TestAsteroid1
-        asteroidDao.insertAll(listOf(asteroid, asteroid, asteroid))
+        asteroidDao.insertAll(asteroid, asteroid, asteroid)
         assert(asteroidDao.getRowCount() == 3){"Inserted incorrect number of asteroids"}
     }
 
