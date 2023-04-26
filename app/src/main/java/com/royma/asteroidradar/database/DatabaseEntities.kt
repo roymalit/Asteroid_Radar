@@ -4,12 +4,13 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.royma.asteroidradar.domain.Asteroid
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
 @Entity(tableName = "asteroid_radar_database")
-data class DatabaseAsteroid(
+data class DatabaseAsteroid constructor(
 
     // NASA JPL small body (SPK-ID) ID
     @ColumnInfo(name = "id")
@@ -48,9 +49,9 @@ data class DatabaseAsteroid(
 /**
  * converts from database objects to domain objects
  */
-fun List<DatabaseAsteroid>.asDomainModel(): List<DatabaseAsteroid> {
+fun List<DatabaseAsteroid>.asDomainModel(): List<Asteroid> {
     return map {
-        DatabaseAsteroid(
+        Asteroid(
             nasaSmallBody = it.nasaSmallBody,
             codename = it.codename,
             closeApproachDate = it.closeApproachDate,

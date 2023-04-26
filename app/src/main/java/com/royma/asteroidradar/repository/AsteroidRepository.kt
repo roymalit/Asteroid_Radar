@@ -5,15 +5,15 @@ import androidx.lifecycle.Transformations
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.asDatabaseModel
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
-import com.royma.asteroidradar.database.DatabaseAsteroid
 import com.royma.asteroidradar.database.asDomainModel
+import com.royma.asteroidradar.domain.Asteroid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class AsteroidRepository (private val database: AsteroidDatabase) {
 
-    val asteroids: LiveData<List<DatabaseAsteroid>> =
+    val asteroids: LiveData<List<Asteroid>> =
             Transformations.map(database.asteroidDatabaseDao.getAsteroids()){
         it.asDomainModel()
     }

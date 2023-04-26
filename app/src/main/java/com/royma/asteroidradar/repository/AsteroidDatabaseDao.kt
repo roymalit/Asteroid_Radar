@@ -28,7 +28,6 @@ interface AsteroidDatabaseDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(vararg asteroids: DatabaseAsteroid)
-//    @Insert(onConflict = OnConflictStrategy.REPLACE)
 //    suspend fun insertAll(objects: List<Asteroid>)
 
     /**

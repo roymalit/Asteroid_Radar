@@ -1,6 +1,7 @@
 package com.royma.asteroidradar.api
 
 import com.royma.asteroidradar.database.DatabaseAsteroid
+import com.royma.asteroidradar.domain.Asteroid
 import com.squareup.moshi.JsonClass
 
 /**
@@ -25,11 +26,11 @@ data class NetworkAsteroid(val nasaSmallBody: Long, val codename: String, val cl
                            val isPotentiallyHazardous: Boolean)
 
 /**
- * Convert Network results to database objects
+ * Convert Network results to domain objects
  */
-fun NetworkAsteroidContainer.asDomainModel(): List<DatabaseAsteroid> {
+fun NetworkAsteroidContainer.asDomainModel(): List<Asteroid> {
     return asteroids.map {
-        DatabaseAsteroid(
+        Asteroid(
             nasaSmallBody = it.nasaSmallBody,
             codename = it.codename,
             closeApproachDate = it.closeApproachDate,
@@ -42,7 +43,11 @@ fun NetworkAsteroidContainer.asDomainModel(): List<DatabaseAsteroid> {
     }
 }
 
+/**
+ * Converts a [List] of database objects into an [Array] of objects
+ */
 fun List<DatabaseAsteroid>.asDatabaseModel(): Array<DatabaseAsteroid> {
+
     return map {
         DatabaseAsteroid(
             nasaSmallBody = it.nasaSmallBody,
