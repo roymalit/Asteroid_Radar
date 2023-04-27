@@ -9,11 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
 import com.royma.asteroidradar.database.DatabaseAsteroid
-import com.royma.asteroidradar.domain.PictureOfDay
-import com.royma.asteroidradar.domain.TestAsteroid1
-import com.royma.asteroidradar.domain.TestAsteroid2
-import com.royma.asteroidradar.domain.TestAsteroid3
+import com.royma.asteroidradar.domain.*
+import com.royma.asteroidradar.repository.AsteroidDatabase
 import com.royma.asteroidradar.repository.AsteroidDatabaseDao
+import com.royma.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +28,11 @@ class AsteroidRadarViewModel(
 ) : AndroidViewModel(application) {
 
     private var latestAsteroid = MutableLiveData<DatabaseAsteroid>()
+
+    // Create new database
+    private val newDatabase = AsteroidDatabase.getInstance(application)
+    // Create asteroids repository
+    private val asteroidRepository = AsteroidRepository(newDatabase)
 
     // Stores the raw data returned from the network API call
     private val _status = MutableLiveData<String>()
@@ -46,8 +50,8 @@ class AsteroidRadarViewModel(
         get() = _picOfDay
 
     // Used to track navigation to Detail view
-    private val _navigateToAsteroidDetail = MutableLiveData<DatabaseAsteroid>()
-    val navigateToAsteroidDetail: LiveData<DatabaseAsteroid>
+    private val _navigateToAsteroidDetail = MutableLiveData<Asteroid>()
+    val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
 
 
@@ -60,8 +64,13 @@ class AsteroidRadarViewModel(
 
     init {
         getImageOfTheDay()
-        getNasaAsteroids()
+        // getNasaAsteroids()
+        viewModelScope.launch {
+            asteroidRepository.refreshAsteroids()
+        }
     }
+
+    val asteroidCollection = asteroidRepository.asteroids
 
     /**
      * Fills the database with dummy data for testing if database usage is successful before
@@ -132,7 +141,7 @@ class AsteroidRadarViewModel(
         }
     }
 
-    fun onAsteroidClicked(selectedAsteroid: DatabaseAsteroid){
+    fun onAsteroidClicked(selectedAsteroid: Asteroid){
         _navigateToAsteroidDetail.value = selectedAsteroid
     }
 }

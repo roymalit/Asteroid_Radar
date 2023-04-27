@@ -16,9 +16,9 @@ interface AsteroidDatabaseDao {
     /**
      * Selects and returns the row that matches the supplied asteroid ID, which is our key.
      *
-     * @param key asteroidId to match
+     * @param key asteroid SPK-ID to match
      */
-    @Query("SELECT * FROM asteroid_radar_database WHERE asteroidId = :key")
+    @Query("SELECT * FROM asteroid_radar_database WHERE id = :key")
     suspend fun get(key: Long): DatabaseAsteroid?
 
     /**
@@ -35,7 +35,7 @@ interface AsteroidDatabaseDao {
      *
      * sorted by date in descending order.
      */
-    @Query("SELECT * FROM asteroid_radar_database")
+    @Query("SELECT * FROM asteroid_radar_database ORDER BY close_approach_date ASC")
     fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
 //    @Query("SELECT * FROM asteroid_radar_database ORDER BY asteroidId DESC") // Used for local/network
 //    fun getAllAsteroids(): LiveData<List<Asteroid>>
@@ -60,7 +60,7 @@ interface AsteroidDatabaseDao {
     /**
      * Selects and returns the latest asteroid.
      */
-    @Query("SELECT * FROM asteroid_radar_database ORDER BY asteroidId DESC LIMIT 1")
+    @Query("SELECT * FROM asteroid_radar_database ORDER BY close_approach_date DESC LIMIT 1")
     suspend fun getLatestAsteroid(): DatabaseAsteroid?
 
     /**

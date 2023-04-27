@@ -6,7 +6,7 @@
     <data>
         <variable
             name="asteroid"
-            type="com.royma.asteroidradar.database.DatabaseAsteroid" />
+            type="com.royma.asteroidradar.domain.Asteroid" />
 
         <variable
             name="detailViewModel"

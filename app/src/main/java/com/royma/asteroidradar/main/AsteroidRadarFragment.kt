@@ -42,8 +42,13 @@ class AsteroidRadarFragment : Fragment() {
         binding.asteroidRecycler.adapter = adapter
 
         // Listens for changes in the database of Asteroids
-        asteroidRadarViewModel.asteroids.observe(viewLifecycleOwner) {
-            it?.let {
+//        asteroidRadarViewModel.asteroids.observe(viewLifecycleOwner) {
+//            it?.let {
+//                adapter.submitList(it)
+//            }
+//        }
+        asteroidRadarViewModel.asteroidCollection.observe(viewLifecycleOwner){
+            it.let {
                 adapter.submitList(it)
             }
         }

@@ -13,6 +13,7 @@ import kotlinx.parcelize.Parcelize
 data class DatabaseAsteroid constructor(
 
     // NASA JPL small body (SPK-ID) ID
+    @PrimaryKey
     @ColumnInfo(name = "id")
     val nasaSmallBody: Long,
 
@@ -41,9 +42,6 @@ data class DatabaseAsteroid constructor(
     @ColumnInfo(name = "is_potentially_hazardous_asteroid")
     val isPotentiallyHazardous: Boolean,
 
-    // Set last to avoid having to name as argument
-    @PrimaryKey(autoGenerate = true)
-    val asteroidId: Long = 0L
 ) : Parcelable
 
 /**

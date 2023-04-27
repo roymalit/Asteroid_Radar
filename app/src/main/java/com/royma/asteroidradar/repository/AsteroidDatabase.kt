@@ -11,7 +11,7 @@ import com.royma.asteroidradar.database.DatabaseAsteroid
  * And a global method to get access to the database.
  *
  * This pattern is pretty much the same for any database,
- * so you can reuse it.
+ * so it can be reused.
  */
 @Database(entities = [DatabaseAsteroid::class], version = 1, exportSchema = false)
 abstract class AsteroidDatabase : RoomDatabase() {
@@ -22,10 +22,10 @@ abstract class AsteroidDatabase : RoomDatabase() {
     abstract val asteroidDatabaseDao: AsteroidDatabaseDao
 
     /**
-     * Define a companion object, this allows us to add functions on the SleepDatabase class.
+     * Define a companion object, this allows us to add functions on the AsteroidDatabase class.
      *
-     * For example, clients can call `SleepDatabase.getInstance(context)` to instantiate
-     * a new SleepDatabase.
+     * For example, clients can call `AsteroidDatabase.getInstance(context)` to instantiate
+     * a new AsteroidDatabase.
      */
     companion object {
         /**
