@@ -1,7 +1,12 @@
 package com.royma.asteroidradar.main
 
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -61,8 +66,6 @@ class AsteroidRadarFragment : Fragment() {
                 asteroidRadarViewModel.onAsteroidDetailNavigated()
             }
         }
-
-        // TODO: Save asteroids in offline repository - only from today's date onwards
 
         /*
             TODO: Use a Worker to download and save/cache today's asteroid data in background

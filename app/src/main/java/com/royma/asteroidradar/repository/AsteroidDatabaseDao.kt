@@ -33,7 +33,7 @@ interface AsteroidDatabaseDao {
     /**
      * Selects and returns all rows in the table,
      *
-     * sorted by date in descending order.
+     * sorted by date in ascending order.
      */
     @Query("SELECT * FROM asteroid_radar_database ORDER BY close_approach_date ASC")
     fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
