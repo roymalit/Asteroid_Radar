@@ -3,11 +3,17 @@ package com.royma.asteroidradar
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.royma.asteroidradar.databinding.ActivityMainBinding
 import com.royma.asteroidradar.work.RefreshAsteroidsWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,13 +23,35 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navHostFragment: NavHostFragment
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         Timber.plant(Timber.DebugTree())
         delayedInit()
+
+        navHostFragment =
+            supportFragmentManager.findFragmentById(binding.navHostFragment.id) as NavHostFragment
+
+        navController = navHostFragment.findNavController()
+
+        setupActionBarWithNavController(navController)
+
+        // TODO: Try to figure out dynamically changing fragment label
+        navController.addOnDestinationChangedListener{ _, _, arguments ->
+            val label = arguments?.get("selectedAsteroid")
+
+            Timber.tag("NavArg").v(label.toString())
+            // destination.label = label
+        }
         // TODO: Make sure the entire app works without an internet connection.
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     /**
