@@ -48,6 +48,10 @@ class MainActivity : AppCompatActivity() {
             // destination.label = label
         }
         // TODO: Make sure the entire app works without an internet connection.
+        /*
+            TODO: Fix app crashing after being offline.
+             "Unable to resolve host "api.nasa.gov": No address associated with hostname"
+         */
     }
 
     override fun onSupportNavigateUp(): Boolean {

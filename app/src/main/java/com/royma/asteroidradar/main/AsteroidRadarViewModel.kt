@@ -5,9 +5,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.api.NasaApi
-import com.royma.asteroidradar.api.parseAsteroidsJsonResult
 import com.royma.asteroidradar.database.DatabaseAsteroid
 import com.royma.asteroidradar.domain.*
 import com.royma.asteroidradar.repository.AsteroidDatabase
@@ -16,18 +16,16 @@ import com.royma.asteroidradar.repository.AsteroidRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import timber.log.Timber
 
+enum class AsteroidFilter {
+    WEEK, TODAY, SAVED;
+}
 /**
  * ViewModel for AsteroidRadarFragment.
  */
-class AsteroidRadarViewModel(
-    val database: AsteroidDatabaseDao,
-    application: Application
-) : AndroidViewModel(application) {
-
-    private var latestAsteroid = MutableLiveData<DatabaseAsteroid>()
+class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
+                             application: Application) : AndroidViewModel(application) {
 
     // Create new database
     private val newDatabase = AsteroidDatabase.getInstance(application)
@@ -54,6 +52,9 @@ class AsteroidRadarViewModel(
     val navigateToAsteroidDetail: LiveData<Asteroid>
         get() = _navigateToAsteroidDetail
 
+    // Used to track which filter is being applied to the Asteroid list
+    private val filterAsteroids = MutableLiveData<AsteroidFilter>()
+
 
     // Potential Lint error in androidx.lifecycle. Remove suppression when fixed
     @SuppressLint("NullSafeMutableLiveData")
@@ -63,6 +64,7 @@ class AsteroidRadarViewModel(
 
 
     init {
+        filterAsteroids.value = AsteroidFilter.WEEK
         getImageOfTheDay()
         // getNasaAsteroids()
         viewModelScope.launch {
@@ -70,19 +72,21 @@ class AsteroidRadarViewModel(
         }
     }
 
-    val asteroidCollection = asteroidRepository.asteroids
+    val asteroidCollection = Transformations.switchMap(filterAsteroids){
+        asteroidRepository.getFilteredAsteroids(it)
+    }
 
     /**
      * Fills the database with dummy data for testing if database usage is successful before
      * connecting it to an online repo.
      */
-    private suspend fun setupDummyData() {
-        withContext(Dispatchers.IO) {
-            clear()
-            database.insertAll(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1)
-            Timber.tag("setupDummyData()").i("Database row count: %s", database.getRowCount())
-        }
-    }
+//    private suspend fun setupDummyData() {
+//        withContext(Dispatchers.IO) {
+//            clear()
+//            database.insertAll(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1)
+//            Timber.tag("setupDummyData()").i("Database row count: %s", database.getRowCount())
+//        }
+//    }
 
     private fun getImageOfTheDay(){
         viewModelScope.launch {
@@ -99,40 +103,27 @@ class AsteroidRadarViewModel(
 
     // Note: Result is a JSON object instead of an array which causes problems
     // Object must be parsed to make it usable by Moshi
-    private fun getNasaAsteroids(){
-        viewModelScope.launch {
-            try {
-                val stringResult = NasaApi.retrofitService.getAsteroids()
-                // Casts the string result to a JSON object then converts it into a List<Asteroid>
-                val parsedResponse = parseAsteroidsJsonResult(JSONObject(stringResult))
-                _status.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
-                _asteroids.value = parsedResponse
-                // storeInOfflineDatabase(parsedResponse)
-                Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
-            } catch (e: Exception){
-                _status.value = "Failure: ${e.message}"
-                Timber.tag("Failure").e(e)
-            }
-        }
+//    private fun getNasaAsteroids(){
+//        viewModelScope.launch {
+//            try {
+//                val stringResult = NasaApi.retrofitService.getAsteroids()
+//                // Casts the string result to a JSON object then converts it into a List<Asteroid>
+//                val parsedResponse = parseAsteroidsJsonResult(JSONObject(stringResult))
+//                _status.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
+//                _asteroids.value = parsedResponse
+//                // storeInOfflineDatabase(parsedResponse)
+//                Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
+//            } catch (e: Exception){
+//                _status.value = "Failure: ${e.message}"
+//                Timber.tag("Failure").e(e)
+//            }
+//        }
+//
+//    }
 
-    }
-
-    private suspend fun insert(asteroid: DatabaseAsteroid) {
-        withContext(Dispatchers.IO) {
-            database.insert(asteroid)
-        }
-    }
-
-    private suspend fun insertAll(asteroids: DatabaseAsteroid) {
-        withContext(Dispatchers.IO) {
-            database.insertAll(asteroids)
-        }
-    }
-
-    private suspend fun update(asteroid: DatabaseAsteroid) {
-        withContext(Dispatchers.IO) {
-            database.update(asteroid)
-        }
+    // Updates currently applied filter
+    fun updateFilter(asteroidFilter: AsteroidFilter){
+        filterAsteroids.value = asteroidFilter
     }
 
     private suspend fun clear() {

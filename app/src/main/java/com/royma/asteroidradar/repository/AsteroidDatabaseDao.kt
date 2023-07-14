@@ -31,14 +31,20 @@ interface AsteroidDatabaseDao {
 //    suspend fun insertAll(objects: List<Asteroid>)
 
     /**
-     * Selects and returns all rows in the table,
+     * Selects and returns all rows in the table from today's date,
      *
-     * sorted by date in ascending order.
+     * sorted by date in ascending order. 7 day coverage by default.
      */
-    @Query("SELECT * FROM asteroid_radar_database ORDER BY close_approach_date ASC")
-    fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
+    @Query("SELECT * FROM asteroid_radar_database WHERE close_approach_date >= date('now','localtime') ORDER BY close_approach_date ASC")
+    fun getWeeksAsteroids(): LiveData<List<DatabaseAsteroid>>
 //    @Query("SELECT * FROM asteroid_radar_database ORDER BY asteroidId DESC") // Used for local/network
 //    fun getAllAsteroids(): LiveData<List<Asteroid>>
+
+    /**
+     * Selects and returns all rows in the table that match today's date
+     */
+    @Query("SELECT * FROM asteroid_radar_database WHERE close_approach_date == date('now','localtime') ORDER BY close_approach_date ASC")
+    fun getTodaysAsteroids(): LiveData<List<DatabaseAsteroid>>
 
     /**
      * When updating a row with a value already set in a column,

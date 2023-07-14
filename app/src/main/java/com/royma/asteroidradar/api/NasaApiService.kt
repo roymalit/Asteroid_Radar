@@ -44,7 +44,7 @@ interface NasaApiService {
     ): PictureOfDay
 
     /**
-     * GETs asteroid data from NASA api.
+     * GETs default asteroid data from NASA api.
      * @param startDate The date from which we'll retrieve asteroid data
      * @param apiKey Personal API key needed to access NASA server data
      */

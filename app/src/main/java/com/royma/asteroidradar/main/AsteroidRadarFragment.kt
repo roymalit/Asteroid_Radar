@@ -18,21 +18,21 @@ import com.royma.asteroidradar.repository.AsteroidDatabase
 
 class AsteroidRadarFragment : Fragment() {
 
+    // Get a reference to the ViewModel associated with this fragment.
+    private val asteroidRadarViewModel by lazy {
+        val application = requireNotNull(this.activity).application
+        // Create an instance of the ViewModel Factory.
+        val dataSource = AsteroidDatabase.getInstance(application).asteroidDatabaseDao
+        val viewModelFactory = AsteroidRadarViewModelFactory(dataSource, application)
+        ViewModelProvider(this, viewModelFactory)[AsteroidRadarViewModel::class.java]
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
 
         val binding = FragmentMainBinding.inflate(inflater)
         binding.lifecycleOwner = viewLifecycleOwner
 
-        val application = requireNotNull(this.activity).application
-
-        // Create an instance of the ViewModel Factory.
-        val dataSource = AsteroidDatabase.getInstance(application).asteroidDatabaseDao
-        val viewModelFactory = AsteroidRadarViewModelFactory(dataSource, application)
-
-        // Get a reference to the ViewModel associated with this fragment.
-        val asteroidRadarViewModel =
-            ViewModelProvider(this, viewModelFactory)[AsteroidRadarViewModel::class.java]
 
         // To use the View Model with data binding, you have to explicitly
         // give the binding object a reference to it.
@@ -67,11 +67,6 @@ class AsteroidRadarFragment : Fragment() {
             }
         }
 
-        /*
-            TODO: Use a Worker to download and save/cache today's asteroid data in background
-             once a day when the device is charging and wifi is enabled
-         */
-
         return binding.root
     }
 
@@ -90,6 +85,12 @@ class AsteroidRadarFragment : Fragment() {
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                asteroidRadarViewModel.updateFilter(
+                    when (menuItem.itemId){
+                        R.id.view_today_menu -> AsteroidFilter.TODAY
+                        else -> AsteroidFilter.WEEK
+                    }
+                )
                 return true
             }
         }, viewLifecycleOwner)
