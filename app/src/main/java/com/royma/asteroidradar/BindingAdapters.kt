@@ -11,10 +11,12 @@ import com.squareup.picasso.Picasso
 @BindingAdapter("statusIcon")
 fun ImageView.bindAsteroidStatusImage(item: Asteroid?) {
     item?.let {
-        if (item.isPotentiallyHazardous) {
+        contentDescription = if (item.isPotentiallyHazardous) {
             setImageResource(R.drawable.ic_status_potentially_hazardous)
+            "Potentially Dangerous"
         } else {
             setImageResource(R.drawable.ic_status_normal)
+            "Not Dangerous"
         }
     }
 }
@@ -54,7 +56,7 @@ fun ImageView.bindPictureOfDayImage(pictureOfDay: PictureOfDay?){
         val imgUri = pictureOfDay?.url?.toUri()
         Picasso.get()
             .load(imgUri)
-            .placeholder(R.drawable.placeholder_picture_of_day)
+            .placeholder(R.drawable.no_image_today_bw)
             .into(this)
     }
 }
