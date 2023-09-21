@@ -1,11 +1,7 @@
 package com.royma.asteroidradar
 
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -96,33 +92,5 @@ class MainActivity : AppCompatActivity() {
             ExistingPeriodicWorkPolicy.KEEP,
             repeatingRequest
         )
-    }
-
-    /*
-     * Methods for checking for network connection
-     */
-    @Suppress("DEPRECATION")
-    fun isConnectedOld(context: Context): Boolean {
-        val connManager = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connManager.activeNetworkInfo
-        return networkInfo?.isConnected ?: false
-    }
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun isConnectedNewApi(context: Context): Boolean {
-        val cm = context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)
-        return capabilities?.hasCapability(NET_CAPABILITY_INTERNET) == true
-    }
-
-    /**
-     * Checks if network connection is available
-     */
-    fun isConnected(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            isConnectedNewApi(context)
-        } else{
-            isConnectedOld(context)
-        }
     }
 }

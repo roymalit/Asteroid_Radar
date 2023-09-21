@@ -2,6 +2,12 @@ package com.royma.asteroidradar.main
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.IOException
 
 enum class AsteroidFilter {
     WEEK, TODAY, SAVED;
@@ -62,13 +69,18 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         _navigateToAsteroidDetail.value = null
     }
 
-
     init {
-        filterAsteroids.value = AsteroidFilter.WEEK
-        getImageOfTheDay()
-        // getNasaAsteroids()
-        viewModelScope.launch {
-            asteroidRepository.refreshAsteroids()
+        try {
+            if (isConnected(application.applicationContext)){
+                filterAsteroids.value = AsteroidFilter.WEEK
+                getImageOfTheDay()
+                // getNasaAsteroids()
+                viewModelScope.launch {
+                    asteroidRepository.refreshAsteroids()
+                }
+            }
+        } catch (e: IOException){
+            Timber.tag("NETWORK_ERROR").d(e)
         }
     }
 
@@ -135,4 +147,53 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
     fun onAsteroidClicked(selectedAsteroid: Asteroid){
         _navigateToAsteroidDetail.value = selectedAsteroid
     }
+
+    /*
+     * Methods for checking for network connection
+     */
+    @Suppress("DEPRECATION")
+    fun isConnectedOld(context: Context): Boolean {
+        val connManager = context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connManager.activeNetworkInfo
+        Timber.tag("NETWORK STATUS OLD").d("Network available: ${networkInfo?.isConnected}")
+        return networkInfo?.isConnected ?: false
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun isConnectedNewApi(context: Context): Boolean {
+        val cm = context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val capabilities = cm.getNetworkCapabilities(cm.activeNetwork)?: return false
+        val capResult = checkAllCapabilities(capabilities)
+        Timber.tag("NETWORK STATUS NEW").d("Network available: $capResult")
+        return capResult
+    }
+
+    /**
+     * Checks if network connection is available
+     */
+    private fun isConnected(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            isConnectedNewApi(context)
+        } else{
+            isConnectedOld(context)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun checkAllCapabilities (capabilities: NetworkCapabilities) =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+                    capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_SUSPENDED) &&
+                    (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+        } else {
+            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+                    (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET))
+        }
 }
