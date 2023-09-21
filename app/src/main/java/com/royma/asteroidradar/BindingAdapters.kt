@@ -51,12 +51,16 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
 }
 
 @BindingAdapter("pictureOfDay")
-fun ImageView.bindPictureOfDayImage(pictureOfDay: PictureOfDay?){
+fun bindPictureOfDayImage(imageView: ImageView, pictureOfDay: PictureOfDay?){
     pictureOfDay.let {
         val imgUri = pictureOfDay?.url?.toUri()
-        Picasso.get()
-            .load(imgUri)
-            .placeholder(R.drawable.no_image_today_bw)
-            .into(this)
+        if (it?.mediaType == "image"){
+            Picasso.get()
+                .load(imgUri)
+                .placeholder(R.drawable.placeholder_picture_of_day)
+                .into(imageView)
+        } else {
+            imageView.setImageResource(R.drawable.no_image_today_bw)
+        }
     }
 }

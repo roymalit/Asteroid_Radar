@@ -1,7 +1,7 @@
 package com.royma.asteroidradar.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.map
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.api.asDatabaseModel
 import com.royma.asteroidradar.api.parseAsteroidsJsonResult
@@ -16,15 +16,15 @@ class AsteroidRepository (private val database: AsteroidDatabase) {
 
     // Tracks the results of fetching the week's asteroids
     private val weeksAsteroids: LiveData<List<Asteroid>> =
-            Transformations.map(database.asteroidDatabaseDao.getWeeksAsteroids()){
+        database.asteroidDatabaseDao.getWeeksAsteroids().map{
         it.asDomainModel()
     }
 
     // // Tracks the results of fetching today's asteroids
     private val todaysAsteroids: LiveData<List<Asteroid>> =
-            Transformations.map(database.asteroidDatabaseDao.getTodaysAsteroids()){
-                it.asDomainModel()
-            }
+        database.asteroidDatabaseDao.getTodaysAsteroids().map{
+            it.asDomainModel()
+        }
 
     fun getFilteredAsteroids(filter: AsteroidFilter): LiveData<List<Asteroid>> {
         return when (filter){

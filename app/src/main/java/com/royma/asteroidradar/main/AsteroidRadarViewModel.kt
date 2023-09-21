@@ -5,7 +5,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import com.royma.asteroidradar.api.NasaApi
 import com.royma.asteroidradar.database.DatabaseAsteroid
@@ -72,7 +72,7 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         }
     }
 
-    val asteroidCollection = Transformations.switchMap(filterAsteroids){
+    val asteroidCollection = filterAsteroids.switchMap{
         asteroidRepository.getFilteredAsteroids(it)
     }
 

@@ -11,7 +11,7 @@ import com.royma.asteroidradar.database.DatabaseAsteroid
 interface AsteroidDatabaseDao {
 
     @Insert
-    suspend fun insert(asteroid: DatabaseAsteroid)
+    fun insert(asteroid: DatabaseAsteroid)
 
     /**
      * Selects and returns the row that matches the supplied asteroid ID, which is our key.
@@ -19,15 +19,15 @@ interface AsteroidDatabaseDao {
      * @param key asteroid SPK-ID to match
      */
     @Query("SELECT * FROM asteroid_radar_database WHERE id = :key")
-    suspend fun get(key: Long): DatabaseAsteroid?
+    fun get(key: Long): DatabaseAsteroid?
 
     /**
      * Inserts all passed-in asteroid objects at once.
      *
-     * @param asteroids an [Array] of Asteroid objects
+     * @param asteroids an [Array] of Asteroid objects.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(vararg asteroids: DatabaseAsteroid)
+    fun insertAll(vararg asteroids: DatabaseAsteroid)
 //    suspend fun insertAll(objects: List<Asteroid>)
 
     /**
@@ -47,32 +47,23 @@ interface AsteroidDatabaseDao {
     fun getTodaysAsteroids(): LiveData<List<DatabaseAsteroid>>
 
     /**
-     * When updating a row with a value already set in a column,
-     * replaces the old value with the new one.
-     *
-     * @param asteroid new value to write
-     */
-    @Update
-    suspend fun update(asteroid: DatabaseAsteroid)
-
-    /**
      * Deletes all values from the table.
      *
      * This does not delete the table, only its contents.
      */
     @Query("DELETE FROM asteroid_radar_database")
-    suspend fun clear()
+    fun clear()
 
     /**
      * Selects and returns the latest asteroid.
      */
     @Query("SELECT * FROM asteroid_radar_database ORDER BY close_approach_date DESC LIMIT 1")
-    suspend fun getLatestAsteroid(): DatabaseAsteroid?
+    fun getLatestAsteroid(): DatabaseAsteroid?
 
     /**
      * Get the row count from the table
      */
     @Query("SELECT COUNT(id) FROM asteroid_radar_database")
-    suspend fun getRowCount(): Int
+    fun getRowCount(): Int
 
 }
