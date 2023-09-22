@@ -74,7 +74,6 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
             if (isConnected(application.applicationContext)){
                 filterAsteroids.value = AsteroidFilter.WEEK
                 getImageOfTheDay()
-                // getNasaAsteroids()
                 viewModelScope.launch {
                     asteroidRepository.refreshAsteroids()
                 }
@@ -88,18 +87,6 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         asteroidRepository.getFilteredAsteroids(it)
     }
 
-    /**
-     * Fills the database with dummy data for testing if database usage is successful before
-     * connecting it to an online repo.
-     */
-//    private suspend fun setupDummyData() {
-//        withContext(Dispatchers.IO) {
-//            clear()
-//            database.insertAll(TestAsteroid1, TestAsteroid2, TestAsteroid3, TestAsteroid1)
-//            Timber.tag("setupDummyData()").i("Database row count: %s", database.getRowCount())
-//        }
-//    }
-
     private fun getImageOfTheDay(){
         viewModelScope.launch {
             try {
@@ -112,26 +99,6 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
             }
         }
     }
-
-    // Note: Result is a JSON object instead of an array which causes problems
-    // Object must be parsed to make it usable by Moshi
-//    private fun getNasaAsteroids(){
-//        viewModelScope.launch {
-//            try {
-//                val stringResult = NasaApi.retrofitService.getAsteroids()
-//                // Casts the string result to a JSON object then converts it into a List<Asteroid>
-//                val parsedResponse = parseAsteroidsJsonResult(JSONObject(stringResult))
-//                _status.value = "Success: ${parsedResponse.size} Asteroid properties retrieved"
-//                _asteroids.value = parsedResponse
-//                // storeInOfflineDatabase(parsedResponse)
-//                Timber.tag("Success").i("${parsedResponse.size} Asteroid properties retrieved")
-//            } catch (e: Exception){
-//                _status.value = "Failure: ${e.message}"
-//                Timber.tag("Failure").e(e)
-//            }
-//        }
-//
-//    }
 
     // Updates currently applied filter
     fun updateFilter(asteroidFilter: AsteroidFilter){
@@ -159,7 +126,6 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         return networkInfo?.isConnected ?: false
     }
 
-
     @RequiresApi(Build.VERSION_CODES.M)
     fun isConnectedNewApi(context: Context): Boolean {
         val cm = context.getSystemService(AppCompatActivity.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -170,7 +136,7 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
     }
 
     /**
-     * Checks if network connection is available
+     * Checks if network connection is available.
      */
     private fun isConnected(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -180,6 +146,9 @@ class AsteroidRadarViewModel(val database: AsteroidDatabaseDao,
         }
     }
 
+    /**
+     * Checks various network capabilities to insure a connection is possible.
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun checkAllCapabilities (capabilities: NetworkCapabilities) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {

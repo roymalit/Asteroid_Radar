@@ -28,7 +28,6 @@ interface AsteroidDatabaseDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: DatabaseAsteroid)
-//    suspend fun insertAll(objects: List<Asteroid>)
 
     /**
      * Selects and returns all rows in the table from today's date,
@@ -37,8 +36,6 @@ interface AsteroidDatabaseDao {
      */
     @Query("SELECT * FROM asteroid_radar_database WHERE close_approach_date >= date('now','localtime') ORDER BY close_approach_date ASC")
     fun getWeeksAsteroids(): LiveData<List<DatabaseAsteroid>>
-//    @Query("SELECT * FROM asteroid_radar_database ORDER BY asteroidId DESC") // Used for local/network
-//    fun getAllAsteroids(): LiveData<List<Asteroid>>
 
     /**
      * Selects and returns all rows in the table that match today's date
